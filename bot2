@@ -1,0 +1,295 @@
+import React, { useState, useRef, useEffect } from 'react';
+
+// Icons with medical theme
+const SeverityLow = () => <span className="text-emerald-500">🟢</span>;
+const SeverityMedium = () => <span className="text-amber-500">🟠</span>;
+const SeverityHigh = () => <span className="text-rose-500">🔴</span>;
+const HomeCare = () => <span className="text-teal-500">🏠</span>;
+const OPDVisit = () => <span className="text-blue-600">🏥</span>;
+const ConditionIcon = () => <span className="text-indigo-500">🧠</span>;
+const SeverityIcon = () => <span className="text-blue-500">📊</span>;
+const RecommendationIcon = () => <span className="text-emerald-600">🧾</span>;
+
+const TypingIndicator = () => (
+  <div className="flex items-center text-blue-700 italic">
+    <span>Dr. Nova is typing</span>
+    <div className="flex space-x-1 ml-1">
+      <div className="h-1 w-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+      <div className="h-1 w-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+      <div className="h-1 w-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+    </div>
+  </div>
+);
+
+const MessageBubble = ({ message, isUser }) => {
+  return (
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
+      <div
+        className={`max-w-xs md:max-w-md lg:max-w-lg rounded-xl px-4 py-2 ${
+          isUser
+            ? 'bg-blue-600 text-white rounded-br-none'
+            : 'bg-white text-gray-800 rounded-bl-none border border-blue-100 shadow-sm'
+        }`}
+      >
+        {message}
+      </div>
+    </div>
+  );
+};
+
+const DiagnosisCard = ({ condition, severity, recommendation, confidence, explanation }) => {
+  const SeverityIcon = () => {
+    switch (severity) {
+      case 'Low': return <SeverityLow />;
+      case 'Medium': return <SeverityMedium />;
+      case 'High': return <SeverityHigh />;
+      default: return <SeverityMedium />;
+    }
+  };
+
+  const RecommendationIcon = () => {
+    switch (recommendation) {
+      case 'Home Remedy': return <HomeCare />;
+      case 'OPD Visit': return <OPDVisit />;
+      default: return <HomeCare />;
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm p-5 mb-4 border border-blue-50">
+      <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center">
+        <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        Medical Assessment
+      </h3>
+      
+      <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="bg-blue-50 p-3 rounded-lg">
+          <div className="flex items-center mb-1">
+            <ConditionIcon />
+            <span className="ml-2 text-sm font-medium text-blue-700">PROBABLE CONDITION</span>
+          </div>
+          <p className="font-bold text-blue-900">{condition}</p>
+        </div>
+        
+        <div className="bg-blue-50 p-3 rounded-lg">
+          <div className="flex items-center mb-1">
+            <SeverityIcon />
+            <span className="ml-2 text-sm font-medium text-blue-700">SEVERITY LEVEL</span>
+          </div>
+          <p className="font-bold text-blue-900">{severity}</p>
+        </div>
+        
+        <div className="bg-blue-50 p-3 rounded-lg">
+          <div className="flex items-center mb-1">
+            <RecommendationIcon />
+            <span className="ml-2 text-sm font-medium text-blue-700">RECOMMENDATION</span>
+          </div>
+          <p className="font-bold text-blue-900">{recommendation}</p>
+        </div>
+      </div>
+      
+      {confidence && (
+        <div className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full inline-flex items-center mb-3">
+          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          {confidence}% Confidence
+        </div>
+      )}
+      
+      {explanation && (
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <button className="flex items-center text-blue-700 font-medium mb-2">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Why this diagnosis?
+          </button>
+          <p className="text-sm text-blue-800">{explanation}</p>
+        </div>
+      )}
+      
+      {severity === 'High' && (
+        <button className="mt-4 w-full bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center">
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+          Book OPD Appointment
+        </button>
+      )}
+    </div>
+  );
+};
+
+const HealthTip = ({ tip }) => (
+  <div className="bg-teal-50 border border-teal-100 rounded-xl p-4 mb-4">
+    <div className="flex items-start">
+      <span className="text-teal-600 mr-3">
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </span>
+      <div>
+        <p className="font-medium text-teal-800">Health Tip</p>
+        <p className="text-sm text-teal-700">{tip}</p>
+      </div>
+    </div>
+  </div>
+);
+
+const ChatWindow = () => {
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      text: "Hi, I'm Dr. Nova, your personal AI health assistant. Please tell me what symptoms you're experiencing today.",
+      isUser: false,
+      isSystem: true
+    }
+  ]);
+  const [inputValue, setInputValue] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  // Sample responses for demo purposes
+  const sampleResponses = [
+    {
+      condition: "Migraine Headache",
+      severity: "Medium",
+      recommendation: "Telemedicine Consultation",
+      confidence: "87",
+      explanation: "Your symptoms of throbbing pain on one side of the head with light sensitivity are consistent with migraine patterns. The duration and intensity suggest a moderate case.",
+      tip: "Rest in a quiet, dark room. Apply a cold compress to your forehead and stay hydrated. Over-the-counter pain relievers may help."
+    },
+    {
+      condition: "Seasonal Allergies",
+      severity: "Low",
+      recommendation: "Home Remedy",
+      confidence: "92",
+      explanation: "Sneezing, itchy eyes, and nasal congestion during spring season are classic allergy symptoms, likely triggered by pollen.",
+      tip: "Try antihistamines and use saline nasal spray. Keep windows closed during high pollen counts."
+    },
+    {
+      condition: "Possible Urinary Tract Infection",
+      severity: "High",
+      recommendation: "OPD Visit",
+      confidence: "78",
+      explanation: "Frequent urination with burning sensation could indicate a UTI which requires antibiotic treatment to prevent complications.",
+      tip: "Drink plenty of water until you can see a doctor. Avoid caffeine and alcohol which can irritate the bladder."
+    }
+  ];
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+
+    // Add user message
+    const newUserMessage = {
+      id: messages.length + 1,
+      text: inputValue,
+      isUser: true
+    };
+    setMessages([...messages, newUserMessage]);
+    setInputValue('');
+    setIsTyping(true);
+
+    // Simulate AI response after delay
+    setTimeout(() => {
+      setIsTyping(false);
+      const randomResponse = sampleResponses[Math.floor(Math.random() * sampleResponses.length)];
+      
+      const aiMessages = [
+        {
+          id: messages.length + 2,
+          component: <DiagnosisCard {...randomResponse} />,
+          isUser: false
+        },
+        {
+          id: messages.length + 3,
+          component: <HealthTip tip={randomResponse.tip} />,
+          isUser: false
+        }
+      ];
+      
+      setMessages(prev => [...prev, ...aiMessages]);
+    }, 1500);
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Header */}
+      <div className="bg-white shadow-sm py-4 px-6 border-b border-blue-100">
+        <div className="flex items-center">
+          <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl w-12 h-12 flex items-center justify-center mr-3 shadow-md">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="font-bold text-blue-800">Dr. Nova</h1>
+            <p className="text-xs text-blue-600">AI-Powered Health Assistant</p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Chat Area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((message) => (
+          <div key={message.id}>
+            {message.component ? (
+              <div className={message.isUser ? 'flex justify-end' : 'flex justify-start'}>
+                {message.component}
+              </div>
+            ) : (
+              <MessageBubble message={message.text} isUser={message.isUser} />
+            )}
+          </div>
+        ))}
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="bg-white text-gray-800 rounded-xl rounded-bl-none px-4 py-2 max-w-xs border border-blue-100">
+              <TypingIndicator />
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+      
+      {/* Input Area */}
+      <div className="bg-white border-t border-blue-100 p-4">
+        <form onSubmit={handleSendMessage} className="flex space-x-3">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Describe your symptoms..."
+            className="flex-1 border border-blue-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent bg-blue-50 placeholder-blue-300"
+          />
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-3 px-5 rounded-xl transition-all shadow-md flex items-center"
+          >
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+            Send
+          </button>
+        </form>
+        <p className="text-xs text-blue-500 mt-2 text-center">
+          Dr. Nova provides health information only, not medical diagnosis. Consult a doctor for serious symptoms.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default ChatWindow;

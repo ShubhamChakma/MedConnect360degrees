@@ -1,0 +1,115 @@
+// DrNovaChatApp.jsx
+import { useEffect, useRef, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
+import { Bot, User } from "lucide-react";
+
+const MessageBubble = ({ sender, text, children }) => {
+  const isUser = sender === "user";
+  const baseStyle = isUser
+    ? "bg-blue-100 text-blue-900 self-end"
+    : "bg-green-100 text-green-900 self-start";
+
+  return (
+    <div className={`max-w-[75%] rounded-2xl p-3 m-2 shadow ${baseStyle}`}>
+      {text}
+      {children}
+    </div>
+  );
+};
+
+const TypingDots = () => (
+  <motion.div
+    className="flex space-x-1 items-center ml-2"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ repeat: Infinity, duration: 1 }}
+  >
+    <div className="w-2 h-2 bg-green-600 rounded-full animate-bounce" />
+    <div className="w-2 h-2 bg-green-600 rounded-full animate-bounce delay-200" />
+    <div className="w-2 h-2 bg-green-600 rounded-full animate-bounce delay-400" />
+  </motion.div>
+);
+
+const ChatWindow = () => {
+  const [messages, setMessages] = useState([
+    {
+      sender: "nova",
+      text: "Hi, I'm Dr. Nova, your personal AI health assistant. Please tell me what symptoms you're experiencing today.",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const scrollRef = useRef(null);
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+
+    const userMessage = { sender: "user", text: input };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setIsTyping(true);
+
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "nova",
+          text: `🧠 *Condition:* Common Cold\n📊 *Severity:* 🟢 Low\n🧾 *Recommendation:* 🏠 Home Care\n💡 Tip: Stay hydrated and rest well.`,
+        },
+      ]);
+      setIsTyping(false);
+    }, 1500);
+  };
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages, isTyping]);
+
+  return (
+    <Card className="w-full max-w-2xl h-[90vh] mx-auto flex flex-col border-green-200">
+      <div className="flex-1 overflow-hidden p-4">
+        <div ref={scrollRef} className="h-full overflow-y-auto pr-2">
+          <div className="flex flex-col">
+            {messages.map((msg, index) => (
+              <MessageBubble key={index} sender={msg.sender} text={msg.text} />
+            ))}
+            {isTyping && (
+              <MessageBubble sender="nova">
+                <div className="flex items-center">
+                  <TypingDots />
+                  <span className="ml-2 text-sm text-gray-500">
+                    Dr. Nova is typing...
+                  </span>
+                </div>
+              </MessageBubble>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="p-4 border-t bg-blue-50 flex gap-2">
+        <Input
+          className="flex-1"
+          placeholder="Describe your symptoms..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+        />
+        <Button onClick={handleSend}>Send</Button>
+      </div>
+    </Card>
+  );
+};
+
+export default function DrNovaChatApp() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-100 flex items-center justify-center p-4">
+      <ChatWindow />
+    </div>
+  );
+}

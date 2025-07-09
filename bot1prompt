@@ -1,0 +1,33 @@
+I want you to generate a clean, modern React-based UI (can be in JSX or HTML+Tailwind) for an AI-powered medical chatbot named **Dr. Nova**.
+
+🧠 Purpose:
+Dr. Nova is a friendly + knowledgeable chatbot that performs intelligent health triage. It takes natural language symptom input from users and responds with:
+- A probable medical condition
+- Severity level (Low / Medium / High)
+- Recommendation (Home Remedy, Telemedicine, or OPD visit)
+- Optional health tips
+- Clear visual indicators (like emoji or icons)
+
+💬 Chat UI Requirements:
+- ChatGPT-like layout (user messages on right, Dr. Nova messages on left)
+- Typing animation (like “Dr. Nova is typing…” with animated dots)
+- Use a calm, trustworthy color scheme (green/blue-themed)
+- Include icons or emojis for severity and medical clarity:
+    - 🟢 Low, 🟠 Medium, 🔴 High
+    - 🏠 Home Care, 🏥 OPD Visit
+    - 🧠 Condition, 📊 Severity, 🧾 Recommendation
+- Display welcome message at the top:  
+  _"Hi, I'm Dr. Nova, your personal AI health assistant. Please tell me what symptoms you're experiencing today."_  
+- Chat bubbles should auto-scroll to latest message.
+- Include a simple text input field with a "Send" button.
+- Optional: Add a "Why this diagnosis?" button to explain Dr. Nova's response.
+- Optional: Include a CTA button like “Book OPD Appointment” if severity is High.
+
+📁 Other notes:
+- Code should be structured and componentized if possible (like ChatWindow, MessageBubble, TypingDots)
+- Feel free to use TailwindCSS for styling.
+- Do not connect to backend for now — just dummy responses and messages for the UI mock.
+
+🚀 Goal:
+Create a functional and visually rich chatbot interface that looks like a real AI triage assistant used in a medical app. Keep tone friendly, informative, and human.
+
