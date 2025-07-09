@@ -1,7 +1,7 @@
-// client/src/api/appointments.js
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://medconnect360degrees.onrender.com";
 
 export const bookAppointment = async (appointmentData) => {
-  const res = await fetch("http://localhost:3000/api/appointments", {
+  const res = await fetch(`${BASE_URL}/api/appointments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -14,5 +14,5 @@ export const bookAppointment = async (appointmentData) => {
     throw new Error(error.message || "Failed to book appointment");
   }
 
-  return res.json(); // contains the saved appointment
+  return res.json();
 };
